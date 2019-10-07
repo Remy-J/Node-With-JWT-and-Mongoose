@@ -7,6 +7,11 @@
     <title>Section Movie-Details</title>
   </head>
   <body>
-    <h1>Bientot plus de détails sur votre selection</h1>
+    <h1>Bientot plus de détails sur <%= movietitle %></h1>
+    <div>
+      <%= movieid %>
+    </div>
+    <!--permet d'importer un Partials-->
+    <% include ./partials/footer %>
   </body>
 </html>

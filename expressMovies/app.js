@@ -21,10 +21,12 @@ app.get('/movies/add', (req, res) => {
   res.send("prochainement un formulaire d'ajout ici")
 })
 
-//route permetant d'afficher le film choisi par l'id passé en parametre dans la route grasse au ':'
-app.get('/movies/:id', (req, res) => {
+//route permetant d'afficher le film choisi par l'id passé en parametre dans l'url grasse au ':'
+// on envoie à la template view des valeur en definisant un objet clef / valeur
+app.get('/movies/:id/:title', (req, res) => {
   const id = req.params.id
-  res.render('movieDetails')
+  const title = req.params.title
+  res.render('movieDetails', { movieid: id, movietitle: title })
 })
 
 // utiliser la methode 'render' pour renvoyer un template
