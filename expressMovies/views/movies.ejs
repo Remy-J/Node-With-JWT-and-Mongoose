@@ -8,10 +8,27 @@
     <title>Movies</title>
   </head>
   <body>
-    <!--permet d'importer un Partials-->
-    <% include ./partials/header %>
-    <h1>Bientot des films ici même</h1>
-    <div></div>
+    <div class="central">
+      <!--permet d'importer un Partials-->
+      <% include ./partials/header %>
+      <h1><%= pagetitle %></h1>
+      <div>
+        <!--permet itérer dans le tableau de données passé en parametre dans app.js-->
+        <% for(movie of movies) {%>
+        <div><%= movie.title %> (<%= movie.year %>)</div>
+        <% } %>
+      </div>
+      <br />
+      <div>
+        <form action="/movies" method="POST">
+          <label for="movieTitle">Titre du film</label>
+          <input type="text" name="movieTitle" id="movieTitle" />
+          <label for="movieYear">Année du film</label>
+          <input type="text" name="movieYear" id="movieYear" />
+          <button type="submit">Ajouter</button>
+        </form>
+      </div>
+    </div>
     <!--permet d'importer un Partials-->
     <% include ./partials/footer %>
   </body>

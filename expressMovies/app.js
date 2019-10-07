@@ -1,20 +1,54 @@
 const express = require('express')
 const app = express()
-
+const bodyParser = require('body-parser')
 const port = 3000
 
+let frenchMovies = []
 // 'use()' permet de definir un middleware que l'on veut utliser
 //'express.static' permet de servir tous les fichiers statique (css pdf ect...)
 //présiser l'emplacement du dossier où sont stockés les fichiers statique
 app.use('/public', express.static('public'))
-
+//on stock bodyParser.urlencoded dans un constante afin de pouvoir le passer en paramètre
+//sur les routes que l'on souhaite.
+const urlEncodedParser = bodyParser.urlencoded({ extended: false })
 // permet d'indiquer la route pour le stockage de nos views
 app.set('views', './views')
 //indique à espress que nos templates views seront faites ave ejs
 app.set('view engine', 'ejs')
 
 app.get('/movies', (req, res) => {
-  res.render('movies')
+  const title = 'films francais des trentes dernières années'
+  frenchMovies = [
+    {
+      title: "le fabuleux destin d'Amelie poulin",
+      year: 2001,
+    },
+    {
+      title: 'Buffet froid',
+      year: 1979,
+    },
+    {
+      title: 'le diner de con',
+      year: 1998,
+    },
+    {
+      title: "De rouille et d'os",
+      year: 2012,
+    },
+  ]
+  res.render('movies', { movies: frenchMovies, pagetitle: title })
+})
+
+app.post('/movies', urlEncodedParser, (req, res) => {
+  console.log(req.body.movieTitle)
+  console.log(req.body.movieYear)
+  const newMovie = { title: req.body.movieTitle, year: req.body.movieYear }
+  //le spread operator permet de décomposer le tableau d'objet frenchMovies et le fait
+  //de passer la constante newMovie en deuxieme parametre va créer un objet avec les données
+  //de Newmovie dans le tableau de frenchMovies
+  frenchMovies = [...frenchMovies, newMovie]
+  console.log(frenchMovies)
+  res.sendStatus(201)
 })
 
 app.get('/movies/add', (req, res) => {
