@@ -12,7 +12,7 @@
       <!--permet d'importer un Partials-->
       <% include ./partials/header %>
       <h1><%= pagetitle %></h1>
-      <div>
+      <div class="french-movies">
         <!--permet itérer dans le tableau de données passé en parametre dans app.js-->
         <% for(movie of movies) {%>
         <div><%= movie.title %> (<%= movie.year %>)</div>
@@ -31,5 +31,36 @@
     </div>
     <!--permet d'importer un Partials-->
     <% include ./partials/footer %>
+    <script>
+      const form = document.querySelector('form')
+      form.addEventListener('submit', addMovie)
+      function addMovie(event) {
+        console.log(event)
+        event.preventDefault()
+        // permet de tester si l'objet window dispose de la propriété fetch cela varie selon different navigateur
+        if (fetch)
+          fetch('/movies', {
+            method: 'POST',
+            body: new FormData(form),
+          })
+            .then(checkStatus)
+            .catch(error => {
+              console.log(error)
+            })
+        function checkStatus(response) {
+          if (response.status >= 200 && response.status < 300) {
+            // si le status est comprit entre 200 et 299 alors on crée une nouvelle div
+            // avec les nouvelle données envoyées depuis notre formulaire
+            let newMovieDiv = document.createElement('div')
+            const movieTitle = document.getElementById('movieTitle').value
+            const movieYear = document.getElementById('movieYear').value
+            newMovieDiv.innerHTML = `${movieTitle} (${movieYear})`
+            // on ajoute notre div newmovieDiv dans la div .frenc-movies avec la method appendChild()
+            document.querySelector('.french-movies').appendChild(newMovieDiv)
+            form.reset()
+          }
+        }
+      }
+    </script>
   </body>
 </html>
