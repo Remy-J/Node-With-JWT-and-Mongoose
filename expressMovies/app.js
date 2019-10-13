@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const multer = require('multer')
+const upload = multer()
 const port = 3000
 
 let frenchMovies = []
@@ -39,16 +41,28 @@ app.get('/movies', (req, res) => {
   res.render('movies', { movies: frenchMovies, pagetitle: title })
 })
 
-app.post('/movies', urlEncodedParser, (req, res) => {
-  console.log(req.body.movieTitle)
-  console.log(req.body.movieYear)
-  const newMovie = { title: req.body.movieTitle, year: req.body.movieYear }
-  //le spread operator permet de décomposer le tableau d'objet frenchMovies et le fait
-  //de passer la constante newMovie en deuxieme parametre va créer un objet avec les données
-  //de Newmovie dans le tableau de frenchMovies
-  frenchMovies = [...frenchMovies, newMovie]
-  console.log(frenchMovies)
-  res.sendStatus(201)
+// app.post('/movies', urlEncodedParser, (req, res) => {
+//   console.log(req.body.movieTitle)
+//   console.log(req.body.movieYear)
+//   const newMovie = { title: req.body.movieTitle, year: req.body.movieYear }
+//   frenchMovies = [...frenchMovies, newMovie]
+//   console.log(frenchMovies)
+//   res.sendStatus(201)
+// })
+
+app.post('/movies', upload.fields([]), (req, res) => {
+  if (!req.body) {
+    return res.sendStatus(500)
+  } else {
+    const formData = req.body
+    console.log('formdata:', formData)
+    const newMovie = { title: req.body.movieTitle, year: req.body.movieYear }
+    //le spread operator permet de décomposer le tableau d'objet frenchMovies et le fait
+    //de passer la constante newMovie en deuxieme parametre va créer un objet avec les données
+    //de Newmovie dans le tableau de frenchMovies
+    frenchMovies = [...frenchMovies, newMovie]
+    res.sendStatus(201)
+  }
 })
 
 app.get('/movies/add', (req, res) => {
@@ -66,6 +80,10 @@ app.get('/movies/:id/:title', (req, res) => {
 // utiliser la methode 'render' pour renvoyer un template
 app.get('/', (req, res) => {
   res.render('index')
+})
+
+app.get('/movie-search', (req, res) => {
+  res.render('movie-search')
 })
 
 app.listen(port, () => {
