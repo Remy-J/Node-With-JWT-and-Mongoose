@@ -3,6 +3,9 @@ const app = express()
 const bodyParser = require('body-parser')
 const multer = require('multer')
 const upload = multer()
+const jwt = require('jsonwebtoken')
+const cors = require('cors')
+
 const port = 3000
 
 let frenchMovies = []
@@ -10,6 +13,7 @@ let frenchMovies = []
 //'express.static' permet de servir tous les fichiers statique (css pdf ect...)
 //présiser l'emplacement du dossier où sont stockés les fichiers statique
 app.use('/public', express.static('public'))
+app.use(cors())
 //on stock bodyParser.urlencoded dans un constante afin de pouvoir le passer en paramètre
 //sur les routes que l'on souhaite.
 const urlEncodedParser = bodyParser.urlencoded({ extended: false })
@@ -84,6 +88,39 @@ app.get('/', (req, res) => {
 
 app.get('/movie-search', (req, res) => {
   res.render('movie-search')
+})
+
+app.get('/login', (req, res) => {
+  res.render('login', { title: 'connexion' })
+})
+
+const fakeUser = { email: 'test@testmail.fr', password: 'azerty' }
+const secret =
+  'qsdjS12ozehdoIJ123DJOZJLDSCqsdeffdg123ER56SDFZedhWXojqshduzaohduihqsDAqsdq'
+
+app.post('/login', urlEncodedParser, (req, res) => {
+  console.log('login post', req.body)
+  if (!req.body) {
+    return res.sendStatus(500)
+  } else {
+    if (
+      fakeUser.email === req.body.email &&
+      fakeUser.password === req.body.password
+    ) {
+      //permet de créer un token avec le contenu et la clef de hachage
+      const myToken = jwt.sign(
+        {
+          iss: 'http://expressmovies.fr',
+          user: 'Sam',
+          scope: 'admin',
+        },
+        secret
+      )
+      res.json(myToken)
+    } else {
+      res.sendStatus(401)
+    }
+  }
 })
 
 app.listen(port, () => {
